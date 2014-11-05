@@ -28,17 +28,17 @@ public class Magpie
    *            the user statement
    * @return a response based on the rules given
    */
-  
-  private String lastPhrase;
+  String lastPhrase = "";
   
   public String getResponse(String statement)
   {
     String response = "";
+  //  System.out.println("lp" +lastPhrase +"state" +statement);// debug
     if (statement.indexOf("no") >= 0)
     {
       response = "Why so negative?";
     }
-    else if (lastPhrase == statement)
+    else if (lastPhrase.indexOf("") == statement.indexOf(""))
     {
       response = "Say something different";
     }
@@ -71,20 +71,21 @@ public class Magpie
     {
       response = "Why so happy?";
     }
-    else if (statement.indexOf("school") >=0)
+    else if (statement.indexOf("school") >=0) // If talks about school, asks about it
     {
       response = "Tell me more about school";
     }
-    else if (statement.indexOf("love") >=0)
+    else if (statement.indexOf("love") >=0) // If talks about love, asks about it
     {
       response = "What do you think about love?";
     }
-    else
+    else //For anything that doesn't match, use a generic response
     {
       response = getRandomResponse();
     }
     lastPhrase = statement;
-    return response;
+   // System.out.println(lastPhrase+" is lp"); // also debug
+    return response; // Returning response
   }
   
   /**
