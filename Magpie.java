@@ -1,3 +1,4 @@
+import java.util.Random;
 public class Magpie
 {  
   public String getGreeting()
@@ -62,22 +63,27 @@ public class Magpie
     {
       response = "What do you think about love?";
     }
-     else if (findKeyword(statement, "I want", 0) >= 0)//if input has "I want" in it, uses transform method to give reply
-  {
-   response = transformIWantStatement(statement);
-  }  
-   int psn = findKeyword(statement, "I", 0);// if input has I something you in it, uses transform method to give reply
-
-   if (psn >= 0// if position >=0 and the statement contains you
-     && findKeyword(statement, "you", psn) >= 0)
-   {
-    response = transformIMeStatement(statement);
-   }  
+    else if (findKeyword(statement, "I want", 0) >= 0)//if input has "I want" in it, uses transform method to give reply
+    {
+      response = transformIWantStatement(statement);
+    }  
+    else if (findKeyword(statement, "Do you", 0) >=0)
+    {
+      response = transformDoYouStatement(statement);
+    }
+    
+    int psn = findKeyword(statement, "I", 0);// if input has I something you in it, uses transform method to give reply
+    if (psn >= 0// if position >=0 and the statement contains you
+          && findKeyword(statement, "you", psn) >= 0)
+    {
+      response = transformIMeStatement(statement);
+    }  
     else
     {
       response = getRandomResponse();
     }
     lastPhrase = statement;
+    System.out.println(statement +" is statement");
     return response;
   }
   
@@ -166,77 +172,78 @@ public class Magpie
     return findKeyword(statement, goal, 0);
   }
   
-  /**
+  private String transformIWantStatement(String statement)
+  {
+    //  Remove the final period, if there is one
+    statement = statement.trim();
+    String lastChar = statement.substring(statement
+                                            .length() - 1);
+    if (lastChar.equals("."))
+    {
+      statement = statement.substring(0, statement
+                                        .length() - 1);
+    }
+    int psn = findKeyword (statement, "I want", 0);//looks for I want in statement
+    String restOfStatement = statement.substring(psn + 7).trim();//the rest of the statement is statement - the first 7 characters
+    return "Would you really be happy if you had " + restOfStatement + "?";//returns the rest of the statement
+  }
+  
+  private String transformDoYouStatement(String statement)
+  {
+    //  Remove the final period, if there is one
+    statement = statement.trim();
+    String lastChar = statement.substring(statement
+                                            .length() - 1);
+    if (lastChar.equals("."))
+    {
+      statement = statement.substring(0, statement
+                                        .length() - 1);
+    }
+    int psn = findKeyword (statement, "Do you", 0);//looks for I want in statement
+    String restOfStatement = statement.substring(psn + 7).trim();//the rest of the statement is statement - the first 7 characters
+    return "Why do you think that I " + restOfStatement + "?";//returns the rest of the statement
+  }
+  
+  
+  private String transformIMeStatement(String statement)
+  {
+    //  Remove the final period, if there is one
+    statement = statement.trim();
+    String lastChar = statement.substring(statement
+                                            .length() - 1);
+    if (lastChar.equals("."))
+    {
+      statement = statement.substring(0, statement
+                                        .length() - 1);
+    }
+    
+    int psnOfI = findKeyword (statement, "I", 0);//looks for the posiiton of I
+    int psnOfMe = findKeyword (statement, "you", psnOfI + 1);// looks for the position of you ONLY if it is past I
+    
+    String restOfStatement = statement.substring(psnOfI + 1, psnOfMe).trim();//trims everything between the two positions
+    return "Why do you " + restOfStatement + " me?";//returns
+  }
+  
+    /**
    * Pick a default response to use if nothing else fits.
    * 
    * @return a non-committal string
    */
-  private String getRandomResponse()
+  private String getRandomResponse ()
   {
-    final int NUMBER_OF_RESPONSES = 6;//number of random possible responses
-    double r = Math.random();
-    int whichResponse = (int) (r * NUMBER_OF_RESPONSES);//randomly decides which to use
-    String response = "";
-    
-    if (whichResponse == 0)
-    {
-      response = "Interesting, tell me more.";
-    }
-    else if (whichResponse == 1)
-    {
-      response = "Hmmm.";
-    }
-    else if (whichResponse == 2)
-    {
-      response = "Do you really think so?";
-    }
-    else if (whichResponse == 3)
-    {
-      response = "You don't say.";
-    }
-    else if (whichResponse == 4)
-    {
-      response = "What do you think?";
-    }
-    else if (whichResponse == 5)
-    {
-      response = "Why?";
-    }
-    return response;
+    Random r = new Random ();
+    return randomResponses [r.nextInt(randomResponses.length)];
   }
   
-  private String transformIWantStatement(String statement)
- {
-  //  Remove the final period, if there is one
-  statement = statement.trim();
-  String lastChar = statement.substring(statement
-    .length() - 1);
-  if (lastChar.equals("."))
-  {
-   statement = statement.substring(0, statement
-     .length() - 1);
-  }
-  int psn = findKeyword (statement, "I want", 0);//looks for I want in statement
-  String restOfStatement = statement.substring(psn + 7).trim();//the rest of the statement is statement - the first 7 characters
-  return "Would you really be happy if you had " + restOfStatement + "?";//returns the rest of the statement
- }
-   private String transformIMeStatement(String statement)
- {
-  //  Remove the final period, if there is one
-  statement = statement.trim();
-  String lastChar = statement.substring(statement
-    .length() - 1);
-  if (lastChar.equals("."))
-  {
-   statement = statement.substring(0, statement
-     .length() - 1);
-  }
+  private String [] randomResponses = {"Interesting, tell me more",
+    "Hmmm.",
+    "Do you really think so?",
+    "You don't say.",
+    "Why?",
+    "Are you sure?",
+    "...",
+    "Is that right?",
+    "Why do you say that?"
+  };
   
-  int psnOfI = findKeyword (statement, "I", 0);//looks for the posiiton of I
-  int psnOfMe = findKeyword (statement, "you", psnOfI + 1);// looks for the position of you ONLY if it is past I
-  
-  String restOfStatement = statement.substring(psnOfI + 1, psnOfMe).trim();//trims everything between the two positions
-  return "Why do you " + restOfStatement + " me?";//returns
- }
- 
 }
